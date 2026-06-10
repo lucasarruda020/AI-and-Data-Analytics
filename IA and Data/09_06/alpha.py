@@ -204,3 +204,75 @@ dados_criterios.size()
 dados_periodo.agg({'tempo': 'mean',
                    'distancia': 'mean',
                    'periodo': 'count'})
+
+
+# Filtros de observacoes
+
+filtro_calmo = dados_tempo[dados_tempo['perfil'] == 'calmo']
+filtro_quartil = dados_tempo[dados_tempo['quartis'] == '1']
+
+dados_tempo.query('perfil == "calmo"')
+dados_tempo.query('quartis == "1"')
+
+
+#. intersecao criterios
+filtro_intersecao = dados_tempo[(dados_tempo['perfil'] == 'calmo') & (dados_tempo['periodo'] == 'Tarde')]
+
+dados_tempo.query('perfil == "calmo" & periodo == "Tarde"' )
+
+
+filtro_uniao = dados_tempo[(dados_tempo['perfil'] == 'calmo') | (dados_tempo['periodo'] == 'Tarde')]
+
+# utilizando operadores em variaveis metricas
+# variavel #tabela[#tabela#coluna#dado]
+
+filtro_tempo_1 = dados_tempo[dados_tempo['tempo'] >= 25]
+
+filtro_tempo_2 = dados_tempo[(dados_tempo['tempo'] > 30) & (dados_tempo['distancia'] <= 25)]
+
+filtro_tempo_3 = dados_tempo[dados_tempo['tempo'].between(25, 40, inclusive='both')]
+
+
+# comparando com valores de outro objeto utilizando isin()
+
+nomes = pd.Series(["Gabriela", "Gustavo", "Leonor", "Ana", "Julia"])
+filtro_contidos = dados_tempo[dados_tempo['estudante'].isin(nomes)]
+
+
+# dados nao 
+
+filtro_tempo_4 = dados_tempo[~(dados_tempo['tempo'] >= 25)]
+
+# Funcao merge para unir bancos de dados (iniciamos com chaves para declrar as colunas): 
+
+dados_merge.rename(columns={'Estudante': 'estudante'}, inplace=True)
+
+# left
+# Observações de dados_tempo -> dados_merge
+# Ficam os IDs de dados_tempo
+
+merge_1 = pd.merge(dados_tempo, dados_merge, how='left', on='estudante')
+
+# Right
+# Observações de dados_tempo -> dados_merge
+# Ficam os IDs de dados_merge
+
+merge_2 = pd.merge(dados_tempo, dados_merge, how='right', on='estudante')
+
+# Outer
+# Observações das duas bases de dados constam na base final 
+# Ficam todos os IDs presentes nas duas bases
+
+merge_3 = pd.merge(dados_tempo, dados_merge, how='outer', on='estudante')
+
+# Inner
+# Somente os IDs que constam nas duas bases ficam na base final 
+# É a interseção de IDs entre as duas bases de dados
+
+merge_4 = pd.merge(dados_tempo, dados_merge, how='inner', on='estudante')
+
+
+# verifcando apenas diferenca entre os bancos
+
+merge_5 = dados_tempo[~ dados_tempo.estudante.isin(dados_merge.estudante)]
+merge_6 = dados_tempo[~ dados_tempo.estudante.isin(dados_tempo.estudante)]
