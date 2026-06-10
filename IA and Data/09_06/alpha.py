@@ -276,3 +276,33 @@ merge_4 = pd.merge(dados_tempo, dados_merge, how='inner', on='estudante')
 
 merge_5 = dados_tempo[~ dados_tempo.estudante.isin(dados_merge.estudante)]
 merge_6 = dados_tempo[~ dados_tempo.estudante.isin(dados_tempo.estudante)]
+#drop duplicates
+dados_tempo.drop_duplicates()
+
+
+# contagem de linhas duplicadas
+
+contagem_dupli = (len(dados_tempo) - len(dados_tempo.drop_duplicates()))
+
+# remocao com algumas variaveis
+
+dados_tempo.drop_duplicates(subset=['estudante', 'perfil'])
+
+# excluindo linhas faltantes com NAs
+## contando quantos tem
+merge_3.isna().sum()
+## Caso queira subistituir NAs por algum elemento
+merge_3 = merge_3.assign(quartis = merge_3.quantic.astype('object'))
+
+# repor NA para texto
+merge_3.fillna('elemento')
+
+# valor metrico, preenchendo os NAs com a media da coluna.
+merge_3['tempo'].fillna(merge_3['tempo'].mean())
+
+# Excluindo observacoes que apresentam valores faltantes
+merge_exclui = merge_3.dropna().reset_index(drop=True)
+
+# funcao pandas .melt alterando a estrutura
+
+df_estrutura = pd.melt(dados_tempo,id_vars='estudante',value_vars=['tempo', 'distancia'])
